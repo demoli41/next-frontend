@@ -1,16 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
-import Link from 'next/link';
-import { useAuth } from '@/context/AuthContext';
+import React, { useState, useEffect, useMemo } from 'react'; 
 import { getAllRecipes } from '@/lib/api';
 import { Recipe } from '@/types';
 import RecipeCard from '@/components/RecipeCard';
-import { FaSearch } from 'react-icons/fa'; 
-import { RevealWrapper } from  'next-reveal'
 
-export default function HomePage() {
-  const { user, logout } = useAuth();
+export default function AllRecipesPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +19,7 @@ export default function HomePage() {
         setRecipes(data);
       } catch (err: any) {
         setError(err.message || 'Не вдалося завантажити рецепти.');
-        console.error('Error fetching all recipes on homepage:', err);
+        console.error('Error fetching all recipes:', err);
       } finally {
         setIsLoading(false);
       }
@@ -64,20 +59,17 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start py-8 px-4 "> 
+    <div className="py-8">
+      <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">Всі Рецепти</h2>
 
-      <div className="relative w-full max-w-xl mb-12">
+      <div className="mb-8 flex justify-center">
         <input
           type="text"
-          placeholder="Пошук рецептів..."
+          placeholder="Пошук за назвою рецепта..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 border bg-white border-gray-300 rounded-3xl shadow-sm
-                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                     focus:shadow-lg transition-all duration-200 text-lg text-gray-800"
-          style={{ boxShadow: '0 1px 6px rgba(32,33,36,.28)' }} 
+          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
         />
-        <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl" />
       </div>
 
       {filteredRecipes.length === 0 ? (
@@ -85,14 +77,12 @@ export default function HomePage() {
           {searchTerm ? 'Не знайдено рецептів за вашим запитом.' : 'Наразі немає доданих рецептів.'}
         </p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
-          {filteredRecipes.map((recipe, index) => (
-                      <RevealWrapper key={recipe.id} delay={index*50}>
-                        <RecipeCard
-                          key={recipe.id}
-                          recipe={recipe}
-                        />
-                      </RevealWrapper>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredRecipes.map((recipe) => (
+            <RecipeCard
+              key={recipe.id}
+              recipe={recipe}
+            />
           ))}
         </div>
       )}
